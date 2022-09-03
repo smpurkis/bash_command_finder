@@ -24,7 +24,7 @@ API_URL = "https://api-inference.huggingface.co/models/bigscience/bloom"
 headers = {"Authorization": os.environ["HUGGING_FACE_API_KEY"]}
 
 
-def query(payload):
+def query(payload: dict) -> dict:
     response = requests.post(API_URL, headers=headers, json=payload)
     return response.json()
 
@@ -35,9 +35,7 @@ def load_json_cmd_examples() -> List[List[str]]:
 
 def save_json_cmd_examples(cmd_examples: List[List[str]]):
     cmd_examples = list(set(tuple([(cmd[0], cmd[1]) for cmd in cmd_examples])))
-    return json.dump(
-        cmd_examples, open("cmd_examples.json", "w"), sort_keys=True, indent=4
-    )
+    json.dump(cmd_examples, open("cmd_examples.json", "w"), sort_keys=True, indent=4)
 
 
 EXAMPLES_CONTEXT = "Linux bash command to accomplish the task"
@@ -53,14 +51,19 @@ def form_query_base(cmd_examples: List[List[str]]) -> List[str]:
     return base_query_list
 
 
-def parse_code_grepper_answer(answer: str) -> str:
-    if "#" in answer:
-        answer_lines = answer.split("\n")
-        answer = "\n".join([a for a in answer_lines if a[0] != "#"])
+def parse_code_grepper_answer(answer: str, debug: bool = False) -> str:
+    # try:
+    #     if "#" in answer:
+    #         answer_lines = [l for l in answer.split("\n") if l != ""]
+    #         answer = "\n".join([a for a in answer_lines if a[0] != "#"])
+    # except Exception as e:
+    #     if debug:
+    #         sys.stdout.write(str(e))
+    #     answer = ""
     return answer
 
 
-def query_code_grepper(search: str) -> str:
+def query_code_grepper(search: str, debug: bool = False) -> str:
     api_version = 3
     query = f"bash {search}"
     base_url = f"https://www.codegrepper.com/api/get_answers_1.php?v={api_version}&s={requests.utils.quote(query)}"
@@ -69,7 +72,10 @@ def query_code_grepper(search: str) -> str:
         base_url, verify=False
     )  # verify=True errs with certificate verify failed: unable to get local issuer certificate
     resp_json = resp.json()
-    answers = [parse_code_grepper_answer(a["answer"]) for a in resp_json["answers"]]
+    answers = [
+        parse_code_grepper_answer(a["answer"], debug) for a in resp_json["answers"]
+    ]
+    answers = [a for a in answers if a != ""]
     return answers
 
 
@@ -152,48 +158,71 @@ def check_cache(text: str):
 
 
 @click.command()
-@click.option(
-    "-s",
-    "--search",
-    required=True,
-    default="",
-    help="describe in english what the terminal command does",
-)
+@click.argument("search")
 @click.option(
     "--debug",
-    default=False,
-    required=False,
-    help="show raw query",
+    is_flag=True,
+    help="show debug logging, i.e. raw query sent to bloom",
 )
 @click.option(
-    "--use_cache",
-    default=True,
-    required=False,
+    "--disable_cache",
+    is_flag=True,
     help="use the cache to reduce queries of previous searches",
 )
-def cmdline_main(search: str, debug: bool, use_cache: bool):
+@click.option(
+    "--disable_bloom",
+    is_flag=True,
+    help="disable bloom search",
+)
+@click.option(
+    "--disable_codegrepper",
+    is_flag=True,
+    help="disable code grepper search",
+)
+def cmdline_main(
+    search: str,
+    debug: bool,
+    disable_cache: bool,
+    disable_bloom: bool,
+    disable_codegrepper: bool,
+):
+    """
+    Try to find bash command by describing it in English.
+    E.g.
+    print "hello world" -> echo "hello world"
+    find all .log files in current directory -> find -name '*.log'
+
+    """
     cmd_text = None
-    if use_cache:
+    if not disable_cache:
         cmd_text = check_cache(search)
     if cmd_text is None:
-        codegrepper_cmds = query_code_grepper(search)
-        if len(codegrepper_cmds) == 0:
-            cmd_text = run_bloom_query(search, debug)
+        if disable_codegrepper:
+            codegrepper_cmds = []
         else:
+            codegrepper_cmds = query_code_grepper(search, debug)
+        if len(codegrepper_cmds) > 1:
             cmd_text = codegrepper_cmds[0]
+        else:
+            if disable_bloom:
+                sys.stdout.write(
+                    "No commands found using code grepper and bloom is disabled"
+                )
+            else:
+                cmd_text = run_bloom_query(search, debug)
     confirm_run_of_bloom_query(search, cmd_text, to_clipboard=True)
 
 
-def run_repl():
-    while True:
-        print(Style.RESET_ALL)
-        input_text = input("> ")
-        if input_text[:2] == "# ":
-            cmd_text = run_bloom_query(input_text)
-            if confirm_run_of_bloom_query(input_text, cmd_text):
-                run_process(cmd_text)
-        else:
-            run_process(input_text)
+# def run_repl():
+#     while True:
+#         print(Style.RESET_ALL)
+#         input_text = input("> ")
+#         if input_text[:2] == "# ":
+#             cmd_text = run_bloom_query(input_text)
+#             if confirm_run_of_bloom_query(input_text, cmd_text):
+#                 run_process(cmd_text)
+#         else:
+#             run_process(input_text)
 
 
 if __name__ == "__main__":
