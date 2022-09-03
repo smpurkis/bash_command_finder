@@ -42,7 +42,7 @@ ls -l
 Would you like to run copy this to clipboard (y/n)? y
 ```
 
-
+Sometimes code grepper is all that is needed for simple commands
 ```
 > python bash_command_finder.py "remove directory" --disable_bloom
 From code grepper: rm -rf directory-name
