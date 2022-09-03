@@ -187,11 +187,17 @@ def cmdline_main(
     disable_codegrepper: bool,
 ):
     """
-    Try to find bash command by describing it in English.
-    E.g.
-    print "hello world" -> echo "hello world"
-    find all .log files in current directory -> find -name '*.log'
+    Find bash command by describing it in English.
 
+    Please set HUGGING_FACE_API_KEY to be able to use Bloom search functionality
+    E.g. "Bearer xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" from https://huggingface.co/bigscience/bloom
+
+
+    Example usage
+
+    - print "hello world" -> echo "hello world"
+
+    - find all .log files in current directory -> find -name '*.log'
     """
     cmd_text = None
     if not disable_cache:
@@ -213,20 +219,5 @@ def cmdline_main(
     confirm_run_of_bloom_query(search, cmd_text, to_clipboard=True)
 
 
-# def run_repl():
-#     while True:
-#         print(Style.RESET_ALL)
-#         input_text = input("> ")
-#         if input_text[:2] == "# ":
-#             cmd_text = run_bloom_query(input_text)
-#             if confirm_run_of_bloom_query(input_text, cmd_text):
-#                 run_process(cmd_text)
-#         else:
-#             run_process(input_text)
-
-
 if __name__ == "__main__":
-    # run_bloom_query("# print hello world to the terminal")
-    # run_bloom_query("# find the first 5 .log files in the current directory")
-    # run_repl()
     cmdline_main()

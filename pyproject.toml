@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ai_terminal"
+name = "bash_command_finder"
 version = "0.1.0"
 description = ""
 authors = ["Sam Purkis <sam.purkis@hotmail.co.uk>"]
