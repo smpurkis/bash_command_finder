@@ -1,15 +1,27 @@
 [
     [
+        "print hello world",
+        "echo \"Hello World\""
+    ],
+    [
         "Look up the IP address 12.34.56.78",
         "nslookup 12.34.56.78"
     ],
     [
-        "zip all files in current directory",
-        "zip -r foo.zip *"
+        "Create a git branch called foo-bar",
+        "git checkout -b foo-bar"
     ],
     [
         "Get the last 5 lines of foo.txt",
         "tail -n 5 foo.txt"
+    ],
+    [
+        "Find files ending in 'log' in root direction",
+        "find / -name '*.log'"
+    ],
+    [
+        "find all .log files in current directory",
+        "find -name '*.log'"
     ],
     [
         "rm all .log files in current directory",
@@ -20,23 +32,15 @@
         "echo \"hello world\""
     ],
     [
-        "Create a git branch called foo-bar",
-        "git checkout -b foo-bar"
-    ],
-    [
-        "find all .log files in current directory",
-        "find -name '*.log'"
-    ],
-    [
         "count number of files in the current directory",
         "ls | wc -l"
     ],
     [
-        "Convert example.png to a JPEG",
-        "convert example.png example.jpg"
+        "zip all files in current directory",
+        "zip -r foo.zip *"
     ],
     [
-        "Find files ending in 'log' in root direction",
-        "find / -name '*.log'"
+        "Convert example.png to a JPEG",
+        "convert example.png example.jpg"
     ]
 ]

@@ -53,6 +53,13 @@ def form_query_base(cmd_examples: List[List[str]]) -> List[str]:
     return base_query_list
 
 
+def parse_code_grepper_answer(answer: str) -> str:
+    if "#" in answer:
+        answer_lines = answer.split("\n")
+        answer = "\n".join([a for a in answer_lines if a[0] != "#"])
+    return answer
+
+
 def query_code_grepper(search: str) -> str:
     api_version = 3
     query = f"bash {search}"
@@ -61,7 +68,8 @@ def query_code_grepper(search: str) -> str:
     resp = requests.get(
         base_url, verify=False
     )  # verify=True errs with certificate verify failed: unable to get local issuer certificate
-    answers = [a["answer"] for a in resp.json()["answers"]]
+    resp_json = resp.json()
+    answers = [parse_code_grepper_answer(a["answer"]) for a in resp_json["answers"]]
     return answers
 
 
@@ -164,7 +172,9 @@ def check_cache(text: str):
     help="use the cache to reduce queries of previous searches",
 )
 def cmdline_main(search: str, debug: bool, use_cache: bool):
-    cmd_text = check_cache(search)
+    cmd_text = None
+    if use_cache:
+        cmd_text = check_cache(search)
     if cmd_text is None:
         codegrepper_cmds = query_code_grepper(search)
         if len(codegrepper_cmds) == 0:
