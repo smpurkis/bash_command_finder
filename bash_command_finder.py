@@ -142,7 +142,7 @@ def confirm_run_of_bloom_query(
     if to_clipboard:
         confirm_text = input("Would you like to copy this command to clipboard (y/n)? ")
     else:
-        confirm_text = input("Would you like to run this command (y/n)? ")
+        confirm_text = input("Is this command correct (y/n)? ")
     if confirm_text.lower() in ["y", "yes"]:
         cmd_examples = load_json_cmd_examples()
         cmd_examples.append([input_text, cmd_text])
