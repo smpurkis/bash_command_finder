@@ -1,0 +1,42 @@
+[
+    [
+        "Look up the IP address 12.34.56.78",
+        "nslookup 12.34.56.78"
+    ],
+    [
+        "zip all files in current directory",
+        "zip -r foo.zip *"
+    ],
+    [
+        "Get the last 5 lines of foo.txt",
+        "tail -n 5 foo.txt"
+    ],
+    [
+        "rm all .log files in current directory",
+        "rm *.log"
+    ],
+    [
+        "print hello world to the terminal",
+        "echo \"hello world\""
+    ],
+    [
+        "Create a git branch called foo-bar",
+        "git checkout -b foo-bar"
+    ],
+    [
+        "find all .log files in current directory",
+        "find -name '*.log'"
+    ],
+    [
+        "count number of files in the current directory",
+        "ls | wc -l"
+    ],
+    [
+        "Convert example.png to a JPEG",
+        "convert example.png example.jpg"
+    ],
+    [
+        "Find files ending in 'log' in root direction",
+        "find / -name '*.log'"
+    ]
+]
