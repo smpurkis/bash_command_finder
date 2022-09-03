@@ -28,5 +28,23 @@ Options:
   --disable_cache        use the cache to reduce queries of previous searches
   --disable_bloom        disable bloom search
   --disable_codegrepper  disable code grepper search
+  --disable_clipboard    disable asking to copy to clipboard, will only print
+                         the suggestions
   --help                 Show this message and exit.
+```
+
+Example usages:
+
+Sometimes Bloom gives the best results, but the API is rate limited, so the default it to search code grepper first.
+```
+> python bash_command_finder.py "list all files and metadata in current directory" --disable_codegrepper
+ls -l
+Would you like to run copy this to clipboard (y/n)? y
+```
+
+
+```
+> python bash_command_finder.py "remove directory" --disable_bloom
+From code grepper: rm -rf directory-name
+Would you like to copy this command to clipboard (y/n)? y
 ```

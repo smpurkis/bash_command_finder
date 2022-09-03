@@ -5,7 +5,7 @@ from typing import List
 
 import pyperclip
 import requests
-from colorama import init, Style
+from colorama import init
 from Levenshtein import distance as levenshtein_distance
 import json
 import click
@@ -66,6 +66,9 @@ def parse_code_grepper_answer(answer: str, debug: bool = False) -> str:
 def query_code_grepper(search: str, debug: bool = False) -> str:
     api_version = 3
     query = f"bash {search}"
+    if debug:
+        sys.stdout.write(query)
+        sys.stdout.write("\n")
     base_url = f"https://www.codegrepper.com/api/get_answers_1.php?v={api_version}&s={requests.utils.quote(query)}"
 
     resp = requests.get(
@@ -102,6 +105,8 @@ def parse_bloom_output(output: str, query_text: str, cmd_text: str) -> str:
         ]
         last_query_line_index = output_line_lev_dists.index(min(output_line_lev_dists))
         answer_lines = output_lines[last_query_line_index + 1 :]
+    if len(answer_lines) == 0:
+        raise Exception("No command via Bloom could be found!")
     answer_line = [a for a in answer_lines if a != ""][0]
     answer_line = correct_answer_line(answer_line)
     return answer_line
@@ -130,14 +135,14 @@ def run_bloom_query(text: str, debug: bool = False) -> str:
 
 
 def confirm_run_of_bloom_query(
-    input_text: str, cmd_text: str, to_clipboard: bool = False
+    input_text: str, cmd_text: str, cmd_origin: str, to_clipboard: bool = False
 ) -> bool:
-    sys.stdout.write(cmd_text)
+    sys.stdout.write(f"From {cmd_origin}: {cmd_text}")
     sys.stdout.write("\n")
     if to_clipboard:
-        confirm_text = input("Would you like to run copy this to clipboard (y/n)? ")
+        confirm_text = input("Would you like to copy this command to clipboard (y/n)? ")
     else:
-        confirm_text = input("Would you like to run this cmd (y/n)? ")
+        confirm_text = input("Would you like to run this command (y/n)? ")
     if confirm_text.lower() in ["y", "yes"]:
         cmd_examples = load_json_cmd_examples()
         cmd_examples.append([input_text, cmd_text])
@@ -179,12 +184,18 @@ def check_cache(text: str):
     is_flag=True,
     help="disable code grepper search",
 )
+@click.option(
+    "--disable_clipboard",
+    is_flag=True,
+    help="disable asking to copy to clipboard, will only print the suggestions",
+)
 def cmdline_main(
     search: str,
     debug: bool,
     disable_cache: bool,
     disable_bloom: bool,
     disable_codegrepper: bool,
+    disable_clipboard: bool,
 ):
     """
     Find bash command by describing it in English.
@@ -199,6 +210,7 @@ def cmdline_main(
 
     - find all .log files in current directory -> find -name '*.log'
     """
+    cmd_origin = "cache"
     cmd_text = None
     if not disable_cache:
         cmd_text = check_cache(search)
@@ -209,14 +221,18 @@ def cmdline_main(
             codegrepper_cmds = query_code_grepper(search, debug)
         if len(codegrepper_cmds) > 1:
             cmd_text = codegrepper_cmds[0]
+            cmd_origin = "code grepper"
         else:
             if disable_bloom:
-                sys.stdout.write(
+                raise Exception(
                     "No commands found using code grepper and bloom is disabled"
                 )
             else:
                 cmd_text = run_bloom_query(search, debug)
-    confirm_run_of_bloom_query(search, cmd_text, to_clipboard=True)
+                cmd_origin = "bloom"
+    confirm_run_of_bloom_query(
+        search, cmd_text, cmd_origin, to_clipboard=not disable_clipboard
+    )
 
 
 if __name__ == "__main__":
