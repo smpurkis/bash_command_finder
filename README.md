@@ -2,7 +2,8 @@
 TLDR: Find bash commands by describing them in plain english
 
 This project uses [Bloom](https://huggingface.co/bigscience/bloom) model from huggingface and 
-[Code grepper](https://www.codegrepper.com/) to search Bash commands from a plain english input.
+[Code grepper](https://www.codegrepper.com/) to search Bash commands from a plain english input. 
+I got inspiration to do this project from [warp](https://www.warp.dev/) AI search feature.
 
 See [cmd_examples.json](https://github.com/smpurkis/bash_command_finder/blob/main/cmd_examples.json) 
 for examples of its usage.
