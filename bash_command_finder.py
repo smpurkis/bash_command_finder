@@ -92,8 +92,6 @@ def run_process(cmd: str, cwd: str = Path().as_posix()):
 
 
 def parse_bloom_output(output: str, query_text: str, cmd_text: str) -> str:
-    import pdb
-    breakpoint()
     full_output = output[0]["generated_text"]
     output_split = full_output.split(query_text)
     answer_lines = []
