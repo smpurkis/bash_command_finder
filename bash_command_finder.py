@@ -21,7 +21,7 @@ init()
 
 API_URL = "https://api-inference.huggingface.co/models/bigscience/bloom"
 # API_URL = "https://api-inference.huggingface.co/models/bigscience/bloom-560m"
-headers = {"Authorization": os.environ["HUGGING_FACE_API_KEY"]}
+headers = {"Bearer": os.environ["HUGGING_FACE_API_KEY"]}
 
 
 def query(payload: dict) -> dict:
@@ -92,6 +92,8 @@ def run_process(cmd: str, cwd: str = Path().as_posix()):
 
 
 def parse_bloom_output(output: str, query_text: str, cmd_text: str) -> str:
+    import pdb
+    breakpoint()
     full_output = output[0]["generated_text"]
     output_split = full_output.split(query_text)
     answer_lines = []
