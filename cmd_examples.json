@@ -4,32 +4,24 @@
         "echo \"Hello World\""
     ],
     [
-        "Look up the IP address 12.34.56.78",
-        "nslookup 12.34.56.78"
+        "rm all .log files in current directory",
+        "rm *.log"
+    ],
+    [
+        "list all files and metadata in current directory",
+        "ls -l"
     ],
     [
         "Create a git branch called foo-bar",
         "git checkout -b foo-bar"
     ],
     [
-        "Get the last 5 lines of foo.txt",
-        "tail -n 5 foo.txt"
-    ],
-    [
         "Find files ending in 'log' in root direction",
         "find / -name '*.log'"
     ],
     [
-        "find all .log files in current directory",
-        "find -name '*.log'"
-    ],
-    [
-        "rm all .log files in current directory",
-        "rm *.log"
-    ],
-    [
-        "print hello world to the terminal",
-        "echo \"hello world\""
+        "Look up the IP address 12.34.56.78",
+        "nslookup 12.34.56.78"
     ],
     [
         "count number of files in the current directory",
@@ -42,5 +34,21 @@
     [
         "Convert example.png to a JPEG",
         "convert example.png example.jpg"
+    ],
+    [
+        "find all .log files in current directory",
+        "find -name '*.log'"
+    ],
+    [
+        "print hello world to the terminal",
+        "echo \"hello world\""
+    ],
+    [
+        "Get the last 5 lines of foo.txt",
+        "tail -n 5 foo.txt"
+    ],
+    [
+        "convert requirements.txt to poetry project",
+        "poetry init && cat requirements.txt | xargs poetry add"
     ]
 ]
