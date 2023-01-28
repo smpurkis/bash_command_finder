@@ -1,54 +1,94 @@
 [
     [
-        "print hello world",
-        "echo \"Hello World\""
-    ],
-    [
-        "rm all .log files in current directory",
-        "rm *.log"
-    ],
-    [
-        "list all files and metadata in current directory",
-        "ls -l"
-    ],
-    [
-        "Create a git branch called foo-bar",
-        "git checkout -b foo-bar"
-    ],
-    [
-        "Find files ending in 'log' in root direction",
-        "find / -name '*.log'"
-    ],
-    [
-        "Look up the IP address 12.34.56.78",
-        "nslookup 12.34.56.78"
+        "show me the contents of a file",
+        "cat FILE"
     ],
     [
         "count number of files in the current directory",
         "ls | wc -l"
     ],
     [
+        "convert requirements.txt to poetry project",
+        "poetry init && cat requirements.txt | xargs poetry add"
+    ],
+    [
+        "Create a git branch called foo-bar",
+        "git checkout -b foo-bar"
+    ],
+    [
+        "remove directory called blah in a git repo",
+        "git rm -r blah"
+    ],
+    [
+        "run a docker container in interactive mode, working example",
+        "docker run -it alpine sh"
+    ],
+    [
         "zip all files in current directory",
         "zip -r foo.zip *"
     ],
     [
-        "Convert example.png to a JPEG",
-        "convert example.png example.jpg"
+        "Find files ending in 'log' in root direction",
+        "find / -name '*.log'"
     ],
     [
-        "find all .log files in current directory",
-        "find -name '*.log'"
-    ],
-    [
-        "print hello world to the terminal",
-        "echo \"hello world\""
+        "install a package on mac osx",
+        "brew install PACKAGE"
     ],
     [
         "Get the last 5 lines of foo.txt",
         "tail -n 5 foo.txt"
     ],
     [
-        "convert requirements.txt to poetry project",
-        "poetry init && cat requirements.txt | xargs poetry add"
+        "count number of lines in a git repo",
+        "git ls-files | xargs wc -l"
+    ],
+    [
+        "find all .log files in current directory",
+        "find -name '*.log'"
+    ],
+    [
+        "push a change to a git repo",
+        "git push REPO"
+    ],
+    [
+        "print hello world to the terminal",
+        "echo \"hello world\""
+    ],
+    [
+        "count number of lines of code in a git repo",
+        "git ls-files | wc -l"
+    ],
+    [
+        "Convert example.png to a JPEG",
+        "convert example.png example.jpg"
+    ],
+    [
+        "run a docker container in interactive mode",
+        "docker run -it DOCKER_CONTAINER COMMAND"
+    ],
+    [
+        "rm all .log files in current directory",
+        "rm *.log"
+    ],
+    [
+        "install a package on linux",
+        "apt-get install PACKAGE"
+    ],
+    [
+        "print hello world",
+        "echo \"Hello World\""
+    ],
+    [
+        "list all files and metadata in current directory",
+        "ls -l"
+    ],
+    [
+        "Look up the IP address 12.34.56.78",
+        "nslookup 12.34.56.78"
+    ],
+    [
+        "add a file to a git repo",
+        "git add FILE"
     ]
 ]
