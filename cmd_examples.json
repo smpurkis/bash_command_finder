@@ -90,5 +90,9 @@
     [
         "add a file to a git repo",
         "git add FILE"
+    ],
+    [
+        "create poetry package",
+        "poetry new PACKAGE"
     ]
 ]

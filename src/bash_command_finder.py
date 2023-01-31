@@ -1,12 +1,11 @@
 import subprocess as sp
 import sys
 from pathlib import Path
-from typing import List
+from typing import Any, Dict, List
 
-import pyperclip
+import pyperclip  # type: ignore
 import requests
 from colorama import init
-from Levenshtein import distance as levenshtein_distance
 import json
 import click
 
@@ -24,6 +23,30 @@ API_URL = "https://api-inference.huggingface.co/models/bigscience/bloom"
 headers = {"Bearer": os.environ["HUGGING_FACE_API_KEY"]}
 
 
+# Levenshtein distance function
+def levenshtein_distance(s1: str, s2: str) -> int:
+    if len(s1) < len(s2):
+        return levenshtein_distance(s2, s1)
+
+    # len(s1) >= len(s2)
+    if len(s2) == 0:
+        return len(s1)
+
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = (
+                previous_row[j + 1] + 1
+            )  # j+1 instead of j since previous_row and current_row are one character longer
+            deletions = current_row[j] + 1  # than s2
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+
+    return previous_row[-1]
+
+
 def query(payload: dict) -> dict:
     response = requests.post(API_URL, headers=headers, json=payload)
     return response.json()
@@ -34,7 +57,12 @@ def load_json_cmd_examples() -> List[List[str]]:
 
 
 def save_json_cmd_examples(cmd_examples: List[List[str]]):
-    cmd_examples = list(set(tuple([(cmd[0], cmd[1]) for cmd in cmd_examples])))
+    cmd_examples = []
+    for cmd in cmd_examples:
+        cmd_examples.append([cmd[0], cmd[1]])
+
+    cmd_examples_set = set(cmd_examples)
+    cmd_examples = list(cmd_examples_set)
     json.dump(cmd_examples, open("cmd_examples.json", "w"), sort_keys=True, indent=4)
 
 
@@ -63,7 +91,7 @@ def parse_code_grepper_answer(answer: str, debug: bool = False) -> str:
     return answer
 
 
-def query_code_grepper(search: str, debug: bool = False) -> str:
+def query_code_grepper(search: str, debug: bool = False) -> List[str]:
     api_version = 3
     query = f"bash {search}"
     if debug:
@@ -91,13 +119,12 @@ def run_process(cmd: str, cwd: str = Path().as_posix()):
             break
 
 
-def parse_bloom_output(output: str, query_text: str, cmd_text: str) -> str:
+def parse_bloom_output(output: Dict[Any, Any], query_text: str, cmd_text: str) -> str:
     full_output = output[0]["generated_text"]
     output_split = full_output.split(query_text)
     answer_lines = []
     if len(output_split) == 2:
-        answer_lines = output_split[1]
-        answer_lines = answer_lines.split("\n")
+        answer_lines = output_split[1].split("\n")
     elif len(output_split) == 1:
         output_lines = output_split[0].split("\n")
         output_line_lev_dists = [
@@ -230,6 +257,7 @@ def cmdline_main(
             else:
                 cmd_text = run_bloom_query(search, debug)
                 cmd_origin = "bloom"
+    # print(cmd_text)
     confirm_run_of_bloom_query(
         search, cmd_text, cmd_origin, to_clipboard=not disable_clipboard
     )

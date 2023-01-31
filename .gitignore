@@ -1,1 +1,14 @@
 .env
+
+# Added by cargo
+
+/target
+/build
+/dist
+/*.spec
+
+# Added by cargo
+#
+# already existing elements were commented out
+
+#/target
